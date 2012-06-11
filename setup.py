@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
-version = '1.0-alpha1'
+version = '1.0a2dev'
 
 description = "Buildout recipe to manage jobs on a remote Jenkins CI server."
 
