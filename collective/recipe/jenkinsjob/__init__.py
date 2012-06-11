@@ -144,7 +144,14 @@ def pull_jenkins_job(options):
     jenkins_server = _connect(options)
     print("Pull Jenkins job %s" % options['jobname'])
     job_config = jenkins_server.get_job_config(options['jobname'])
-    _write_configuration(job_config, options['config'])
+    if job_config:
+        _write_configuration(job_config, options['config'])
+    else:
+        print("Jenkins job '%s' seems not to exist on '%s'." % (
+            options['jobname'],
+            options['hostname']))
+        print("Make sure the job exists and is accessible by user '%s'." %
+            options['username'])
 
 
 def push_jenkins_job(options):
