@@ -4,6 +4,9 @@ Changelog
 1.0a2 (unreleased)
 ------------------
 
+- Github post-commit hook options added.
+  [timo]
+
 - Show error message when a job can not be pulled from the server.
   [timo]
 

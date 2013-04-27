@@ -39,7 +39,7 @@ entry_points = {
 
 tests_require = [
   'zope.testing',
-  'zc.buildout',
+  'zc.buildout[test]',
   'mocker'
 ]
 
@@ -69,6 +69,7 @@ setup(name='collective.recipe.jenkinsjob',
         'python-jenkins',
         'zc.recipe.egg',
         'collective.recipe.template',
+        'requests',
       ],
       tests_require=tests_require,
       extras_require=dict(tests=tests_require),

@@ -6,6 +6,7 @@ from shutil import copyfile
 import jenkins
 import zc.recipe.egg
 from zc.buildout import UserError
+from github import create_hook
 
 
 class Recipe(object):
@@ -55,6 +56,7 @@ class Recipe(object):
     def install(self):
         """Installer"""
         self.install_scripts()
+        self.install_github_hook()
 
         # Return files that were created by the recipe. The buildout
         # will remove all returned files upon reinstall.
@@ -101,6 +103,27 @@ class Recipe(object):
             arguments=self.options.__repr__(),
         )
 
+    def install_github_hook(self):
+        has_gh_username = 'github_username' in self.options
+        has_gh_password = 'github_password' in self.options
+        github_project = None
+        if 'github_project' in self.options:
+            github_project = self.options['github_project']
+        github_hook_url = None
+        if 'github_hook_url' in self.options:
+            github_hook_url = self.options['github_hook_url']
+
+        if has_gh_username and has_gh_password and (github_hook_url or github_project):
+            create_hook(
+                self.options['hostname'],
+                self.options['username'],
+                self.options['password'],
+                self.options['github_username'],
+                self.options['github_password'],
+                self.options['jobname'],
+                github_project=github_project,
+                github_hook_url=github_hook_url,
+            )
 
 def _connect(options):
     """Connect to a Jenkins CI server.

@@ -37,6 +37,18 @@ password (required)
 port (default: 80)
     Jenkins port
 
+github_username
+    Github username
+
+github_password
+    Github password
+
+github_project
+    Github Project name. e.g. 'plone.app.discussion'
+
+github_hook_url
+    Github hook url. e.g. 'https://api.github.com/repos/plone/Products.CMFPlone/hooks'
+
 
 Example usage
 =============
@@ -75,3 +87,78 @@ Running the buildout gives us::
     True
     >>> "bin/jenkins-job-trigger-build" in buildout_output_lower
     True
+
+
+Github Post-commit hook example
+===============================
+
+We'll start by creating a buildout that uses the recipe::
+
+    >>> write('buildout.cfg',
+    ... """
+    ... [buildout]
+    ... parts = jenkins-job
+    ...
+    ... [jenkins-job]
+    ... recipe = collective.recipe.jenkinsjob
+    ... hostname = %(hostname)s
+    ... jobname = %(jobname)s
+    ... jobconfig = %(jobconfig)s
+    ... username = %(username)s
+    ... password = %(password)s
+    ... github_username = %(github_username)s
+    ... github_password = %(github_password)s
+    ... github_project = %(github_project)s
+    ... """ % {
+    ...     'hostname' : 'jenkins.plone.org',
+    ...     'jobname' : 'Plone42',
+    ...     'jobconfig': 'plone.xml',
+    ...     'username': 'chuck',
+    ...     'password': 'norris',
+    ...     'github_username': 'john',
+    ...     'github_password': 'doe',
+    ...     'github_project': 'plone.app.discussion'
+    ... })
+
+Running the buildout gives us::
+
+    >>> buildout_output_lower = system(buildout).lower()
+    >>> "installing jenkins-job" in buildout_output_lower
+    True
+    >>> "generated script" in buildout_output_lower
+    True
+    >>> "bin/jenkins-job-push" in buildout_output_lower
+    True
+    >>> "bin/jenkins-job-pull" in buildout_output_lower
+    True
+    >>> "bin/jenkins-job-trigger-build" in buildout_output_lower
+    True
+
+Alternatively, instead of providing a github_project param you can provide a
+github_hook_url:
+
+    >>> write('buildout.cfg',
+    ... """
+    ... [buildout]
+    ... parts = jenkins-job
+    ...
+    ... [jenkins-job]
+    ... recipe = collective.recipe.jenkinsjob
+    ... hostname = %(hostname)s
+    ... jobname = %(jobname)s
+    ... jobconfig = %(jobconfig)s
+    ... username = %(username)s
+    ... password = %(password)s
+    ... github_username = %(github_username)s
+    ... github_password = %(github_password)s
+    ... github_hook_url = %(github_hook_url)s
+    ... """ % {
+    ...     'hostname' : 'jenkins.plone.org',
+    ...     'jobname' : 'Plone42',
+    ...     'jobconfig': 'plone.xml',
+    ...     'username': 'chuck',
+    ...     'password': 'norris',
+    ...     'github_username': 'john',
+    ...     'github_password': 'doe',
+    ...     'github_hook_url': 'https://api.github.com/repos/plone/Products.CMFPlone/hooks'
+    ... })
